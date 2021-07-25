@@ -7,9 +7,19 @@ export default function App() {
   const { register, handleSubmit } = useForm();
 
   const onSubmit = (data) => {
-    console(JSON.stringify(data))
+    alert(JSON.stringify(data))
     console.log(data)
   };
+
+//   const handleClick = () => {
+//     fetch("http://localhost:9292/patients/"+ patient.id, {
+//         method: "DELETE",
+//         headers: {
+//             'Content-Type': 'application/json',
+//         } 
+//     })
+//     updateCourses(course.id)
+// }
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
