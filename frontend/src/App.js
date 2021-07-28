@@ -21,6 +21,15 @@ export default function App() {
 //     updateCourses(course.id)
 // }
 
+// fetch("http://localhost:9292/patients", {
+//   method: 'POST',
+//   headers: {
+//       "Content-Type": "application/json",
+//       "Accepts": "application/json"
+//   },
+// body: JSON.stringify({first_name: "Jim", last_name: "Dean", condition: "General"})
+// }).then(res => res.json()).then(data => console.log(data))
+
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Heading />
