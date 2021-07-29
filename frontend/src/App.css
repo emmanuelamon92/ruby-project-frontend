@@ -18,6 +18,10 @@ body {
   padding-bottom: 0px;
 }
 
+.user-card {
+  text-align: center;
+}
+
 .form {
   max-width: 800px;
   margin: 0 auto;
