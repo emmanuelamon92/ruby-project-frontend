@@ -8,69 +8,106 @@ import Heading from "./Heading";
 export default function App() {
   //USEFORM HOOK WITH DATA BEING PASSED TO STATE IN ORDER TO BE PLACED IN POST REQUEST FETCH
   const { register, handleSubmit } = useForm();
-
-  const [userInfo, setUserInfo] = useState({})
-  const onSubmit = (data) => setUserInfo(data);
-  console.log(userInfo)
-
-
-//<--- DELETE REQUEST DELETING PATIENT FROM PORT:9292 /PATIENTS/ ENDPOINT START --->
-
-
-//   const handleClick = () => {
-//     fetch("http://localhost:9292/patients/"+ patient.id, {
-//         method: "DELETE",
-//         headers: {
-//             'Content-Type': 'application/json',
-//         } 
-//     })
-//     updateCourses(course.id)
-// }
-
-
-//<--- DELETE REQUEST DELETING PATIENT FROM PORT:9292 /PATIENTS/ ENDPOINT END --->
-
   
+  const [patient, setPatient] = useState({})
+  const [response, setResponse] = useState({})
+
+
 //<--- POST REQUEST FROM USER INPUT FORM TO DATABASE PORT:9292 /PATIENTS/ ENDPOINT START ---> 
   
   
-fetch("http://localhost:9292/patients/", {
-  method: 'POST',
-  headers: {
-      "Content-Type": "application/json",
-      "Accepts": "application/json"
-  },
-body: JSON.stringify({first_name: userInfo.firstName, last_name: userInfo.lastName, condition: userInfo.condition})
-}).then(res => res.json()).then(data => {
-  console.log(data)
-})
-  
-  
+  const onSubmit = (data) => {
+    fetch("http://localhost:9292/patients/", {
+      method: 'POST',
+      headers: {
+          "Content-Type": "application/json",
+          "Accepts": "application/json"
+      },
+    body: JSON.stringify(data)
+    })
+    .then(res => res.json())
+    .then(data => {
+      setResponse(data)
+    })
+  };
+
+
 //<--- POST REQUEST FROM USER INPUT FORM TO DATABASE PORT:9292 /PATIENTS/ ENDPOINT END ---> 
+
+  
+//<--- FUNCTIONS POSTING PATIENT ADDED OR NOT TO DOM START --->
+  
+   
+const postSuccesOrFail = () => {
+  return !response.error ? response.message : response.error;
+}
+  
+const postPatientAddedOrError = () => {
+  return (
+    <div>
+      <h3>{postSuccesOrFail()}</h3>
+    </div>
+  )}
+
+const postAllPatients = () => {
+  return (
+    <div className='user-card'>
+      <h3>{postSuccesOrFail()}</h3>
+      <button>Delete</button>
+    </div>
+  )}
+
+  
+//<--- FUNCTION POSTING PATIENT ADDED OR ERROR TO DOM END ---> 
+
+  
+//<--- FUNCTION GET REQUEST POSTING ALL PATIENTS FOR DELETION START ---> 
+
+
+const getAllPatients = () => {
+  fetch("http://localhost:9292/patients/", {
+      headers: {
+          'Content-Type': 'application/json',
+      } 
+  })
+  .then(res => res.json())
+    .then(patients => {
+      console.log(patients)
+      patients.data.map(patient => {
+        setPatient(patient)
+      })
+    })
+  //  value of button equals id of patient
+}
   
   
-// <--- FUNCTION POSTING PATIENT INFO TO DOM START --->
-  
-
-  const postPatientToDom = () => {
-    return (
-      <div className='user-card'>
-        <h3>First Name: { userInfo.firstName }</h3>
-        <h3>Last Name: { userInfo.lastName }</h3>
-        <h3>Condition: { userInfo.condition }</h3>
-      </div>
-    )}
+//<--- FUNCTION GET REQUEST POSTING ALL PATIENTS FOR DELETION START ---> 
 
 
- //<--- FUNCTION POSTING PATIENT INFO TO DOM END ---> 
+//<--- FUNCTION DELETE REQUEST DELETING PATIENT FROM PORT:9292 /PATIENTS/ ENDPOINT START --->
+
+
+  const deletePatient = () => {
+    fetch("http://localhost:9292/patients/"+ patient.id, {
+        method: "DELETE",
+        headers: {
+            'Content-Type': 'application/json',
+        } 
+    })
+    setPatient(patient.id)
+    //  value of button equals id of patient
+}
+
+
+//<--- DELETE REQUEST DELETING PATIENT FROM PORT:9292 /PATIENTS/ ENDPOINT END --->
   
 
   return (
     <div>
       <form onSubmit={handleSubmit(onSubmit)}>
         <Heading />
-        <input {...register("firstName")} placeholder="First name" autoComplete="off"/>
-        <input {...register("lastName")} placeholder="Last name" autoComplete="off"/>
+        <input {...register("first_name")} placeholder="First name" autoComplete="off"/>
+        <input {...register("last_name")} placeholder="Last name" autoComplete="off"/>
         <select {...register("condition")}>
           <option value="">Reason for visit...</option>
           <option value="Covid">Covid</option>
@@ -81,7 +118,8 @@ body: JSON.stringify({first_name: userInfo.firstName, last_name: userInfo.lastNa
         </select>
         <input type="submit" />
       </form>
-      <div className='patient-data'>{postPatientToDom()}</div>
+      <div className='patient-data'>{postPatientAddedOrError()}</div>
+      <button className='deleteButton' onClick={getAllPatients}>Delete Patient</button>
     </div>
   );
 }
