@@ -9,10 +9,11 @@ export default function App() {
   //USEFORM HOOK WITH DATA BEING PASSED TO STATE IN ORDER TO BE PLACED IN POST REQUEST FETCH
   const { register, handleSubmit } = useForm();
   
-  const [patient, setPatient] = useState({})
+  const [patientId, setPatientId] = useState(0)
+  const [patients, setPatients] = useState({})
   const [response, setResponse] = useState({})
 
-
+  console.log(patients.data)
 //<--- POST REQUEST FROM USER INPUT FORM TO DATABASE PORT:9292 /PATIENTS/ ENDPOINT START ---> 
   
   
@@ -44,19 +45,29 @@ const postSuccesOrFail = () => {
   
 const postPatientAddedOrError = () => {
   return (
-    <div>
+    <div className='patient-data'>
       <h3>{postSuccesOrFail()}</h3>
     </div>
   )}
 
-const postAllPatients = () => {
-  return (
-    <div className='user-card'>
-      <h3>{postSuccesOrFail()}</h3>
-      <button>Delete</button>
-    </div>
-  )}
-
+  const postAllPatients = () => {
+    console.log("we in there")
+    if (patients.data !== undefined) {
+      return patients.data.map(patient => {
+        // setPatientId(patient.id)
+        return (
+          //value of button equals id of patient
+          <div className='user-card'>
+            <h3>{patient.id}</h3>
+            <h3>{patient.first_name} {patient.last_name}</h3>
+            <h3>{patient.condition}</h3>
+            <h3>{patient.is_admitted}</h3>
+            <button>Delete</button>
+          </div>
+        )
+      })
+    }
+  }
   
 //<--- FUNCTION POSTING PATIENT ADDED OR ERROR TO DOM END ---> 
 
@@ -72,12 +83,8 @@ const getAllPatients = () => {
   })
   .then(res => res.json())
     .then(patients => {
-      console.log(patients)
-      patients.data.map(patient => {
-        setPatient(patient)
-      })
+      setPatients(patients)
     })
-  //  value of button equals id of patient
 }
   
   
@@ -88,13 +95,13 @@ const getAllPatients = () => {
 
 
   const deletePatient = () => {
-    fetch("http://localhost:9292/patients/"+ patient.id, {
+    fetch("http://localhost:9292/patients/"+ patientId, {
         method: "DELETE",
         headers: {
             'Content-Type': 'application/json',
         } 
     })
-    setPatient(patient.id)
+    // setPatients(patients.id)
     //  value of button equals id of patient
 }
 
@@ -118,8 +125,9 @@ const getAllPatients = () => {
         </select>
         <input type="submit" />
       </form>
-      <div className='patient-data'>{postPatientAddedOrError()}</div>
+      {postPatientAddedOrError()}
       <button className='deleteButton' onClick={getAllPatients}>Delete Patient</button>
+      {postAllPatients()}
     </div>
   );
 }
