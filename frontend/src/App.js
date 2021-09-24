@@ -14,6 +14,9 @@ export default function App() {
   const [response, setResponse] = useState({})
 
   console.log(patients.data)
+  console.log(patients)
+
+
 //<--- POST REQUEST FROM USER INPUT FORM TO DATABASE PORT:9292 /PATIENTS/ ENDPOINT START ---> 
   
   
@@ -58,17 +61,19 @@ const postPatientAddedOrError = () => {
         return (
           //value of button equals id of patient
           <div className='user-card'>
-            <h3>{patient.id}</h3>
             <h3>{patient.first_name} {patient.last_name}</h3>
             <h3>{patient.condition}</h3>
             <h3>{patient.is_admitted}</h3>
-            <button>Delete</button>
+            <button onClick={deletePatient} value={patient.id} onMouseEnter={(e) => setPatientId(e.target.value)}>Delete</button>
           </div>
         )
       })
     }
   }
   
+//click button delete patientid associated with that button...
+//onclick patient id changes to patient id of clicked button...
+
 //<--- FUNCTION POSTING PATIENT ADDED OR ERROR TO DOM END ---> 
 
   
@@ -83,7 +88,7 @@ const getAllPatients = () => {
   })
   .then(res => res.json())
     .then(patients => {
-      setPatients(patients)
+      setPatients(...[patients])
     })
 }
   
@@ -101,9 +106,11 @@ const getAllPatients = () => {
             'Content-Type': 'application/json',
         } 
     })
-    // setPatients(patients.id)
+    .then(getAllPatients)
+    // postAllPatients()
     //  value of button equals id of patient
-}
+  }
+
 
 
 //<--- DELETE REQUEST DELETING PATIENT FROM PORT:9292 /PATIENTS/ ENDPOINT END --->
